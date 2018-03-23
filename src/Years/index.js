@@ -2,11 +2,12 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import VirtualList from 'react-tiny-virtual-list';
 import classNames from 'classnames';
-import {emptyFn, getMonthsForYear} from '../utils';
+import {emptyFn, getMonthsForYear, isRange} from '../utils';
 import format from 'date-fns/format';
 import isAfter from 'date-fns/is_after';
 import isBefore from 'date-fns/is_before';
 import isSameMonth from 'date-fns/is_same_month';
+import isWithinRange from 'date-fns/is_within_range';
 import styles from './Years.scss';
 
 const SPACING = 40;
@@ -49,13 +50,13 @@ export default class Years extends Component {
   }
 
   renderMonths(year) {
-    const {locale: {locale}, selected, theme, today, min, max, minDate, maxDate} = this.props;
-    const months = getMonthsForYear(year, selected.getDate());
+    const {locale: {locale}, selected, theme, today, min, max, minDate, maxDate, handlers} = this.props;
+    const months = isRange(selected) ?  getMonthsForYear(year) : getMonthsForYear(year, selected.getDate());
 
     return (
       <ol>
         {months.map((date, index) => {
-          const isSelected = isSameMonth(date, selected);
+          const isSelected = isRange(selected) ? isWithinRange(date, selected.start, selected.end) : isSameMonth(date, selected);
           const isCurrentMonth = isSameMonth(date, today);
           const isDisabled = (
             isBefore(date, min) ||
@@ -90,6 +91,8 @@ export default class Years extends Component {
               })}
               style={style}
               title={`Set date to ${format(date, 'MMMM Do, YYYY')}`}
+              data-date={date}
+              {...handlers}
             >
               {format(date, 'MMM', {locale})}
             </li>
@@ -103,7 +106,7 @@ export default class Years extends Component {
     const {height, selected, showMonths, theme, today, width} = this.props;
     const currentYear = today.getFullYear();
     const years = this.props.years.slice(0, this.props.years.length);
-    const selectedYearIndex = years.indexOf(selected.getFullYear());
+    const selectedYearIndex = isRange(selected) ? years.indexOf(selected.start.getFullYear()) : years.indexOf(selected.getFullYear());
     const rowHeight = showMonths ? 110 : 50;
     const heights = years.map((val, index) => index === 0 || index === years.length - 1
       ? rowHeight + SPACING
@@ -126,7 +129,7 @@ export default class Years extends Component {
           itemCount={years.length}
           estimatedItemSize={rowHeight}
           itemSize={(index) => heights[index]}
-          scrollToIndex={selectedYearIndex !== -1 ? selectedYearIndex : null}
+          scrollToIndex={selectedYearIndex !== -1 && !isRange(selected) ? selectedYearIndex : null}
           scrollToAlignment='center'
           renderItem={({index, style}) => {
             const year = years[index];

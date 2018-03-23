@@ -186,4 +186,9 @@ export function range(start, stop, step = 1) {
   return range;
 };
 
+export function isRange(date) {
+    const {start, end} = date;
+    return start != null || end != null;
+}
+
 export {default as animate} from './animate';
