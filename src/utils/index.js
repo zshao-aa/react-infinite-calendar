@@ -6,6 +6,9 @@ import isBefore from 'date-fns/is_before';
 import isSameDay from 'date-fns/is_same_day';
 import endOfDay from 'date-fns/end_of_day';
 import startOfDay from 'date-fns/start_of_day';
+import min from 'date-fns/min';
+import max from 'date-fns/max';
+import parse from 'date-fns/parse';
 import {withPropsOnChange} from 'recompose';
 
 export const keyCodes = {
@@ -187,8 +190,33 @@ export function range(start, stop, step = 1) {
 };
 
 export function isRange(date) {
+    if (!date) {
+        return false;
+    }
     const {start, end} = date;
-    return start != null || end != null;
+    return start && end;
+}
+
+export function getSortedDate(start, end) {
+  return isBefore(start, end)
+    ? {start, end}
+    : {start: end, end: start};
+}
+
+export function getFirstDateOfMonth(dateStr) {
+    if (!dateStr) {
+        return dateStr;
+    }
+    const date = parse(dateStr);
+    return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+export function getLastDateOfMonth(dateStr) {
+    if (!dateStr) {
+        return dateStr;
+    }
+    const date = parse(dateStr);
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0);
 }
 
 export {default as animate} from './animate';
