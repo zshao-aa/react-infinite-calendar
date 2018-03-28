@@ -57,9 +57,10 @@ export default class Years extends Component {
         end: parse(selected.end),
       }
     }
+    // remove time
     return {
-      start: parse(selected),
-      end: parse(selected),
+      start: parse(format(selected, 'YYYY-MM-DD')),
+      end: parse(format(selected, 'YYYY-MM-DD')),
     }
   }
 
