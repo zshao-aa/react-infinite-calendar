@@ -1,9 +1,11 @@
+import parse from 'date-fns/parse';
+import format from 'date-fns/format';
+import min from 'date-fns/min';
+import max from 'date-fns/max';
 import {compose, withProps, withState} from 'recompose';
 import {withDefaultProps} from './';
-import {withImmutableProps} from '../utils';
-import isBefore from 'date-fns/is_before';
-import parse from 'date-fns/parse';
-import {EVENT_TYPE} from '../withRange'
+import {withImmutableProps, getFirstDateOfMonth, getLastDateOfMonth} from '../utils';
+import {EVENT_TYPE, getInitialDate, getSortedSelection} from './Range';
 
 let isTouchDevice = false;
 
@@ -17,12 +19,12 @@ export const withMonthRange = compose(
   }) => ({
     YearsComponent: YearsComponent,
   })),
-  withProps(({displayKey, passThrough, selected, setDisplayKey, ...props}) => ({
+  withProps(({passThrough, selected, ...props}) => ({
     /* eslint-disable sort-keys */
     passThrough: {
       ...passThrough,
       Years: {
-        onSelect: (date) => handleYearSelect(date, {selected, ...props}),
+        onSelect: (date) => handleSelect(date, {selected, ...props}),
         handlers: {
           onMouseOver: !isTouchDevice && props.selectionStart
             ? (e) => handleMouseOver(e, {selected, ...props})
@@ -31,68 +33,69 @@ export const withMonthRange = compose(
       },
     },
     selected: {
-      start: selected && parse(selected.start),
-      end: selected && parse(selected.end),
+      start: selected && getFirstDateOfMonth(selected.start),
+      end: selected && getLastDateOfMonth(selected.end),
     },
   })),
-
 );
-
-function handleYearSelect(date, {onSelect, selected, setScrollDate, selectionStart, setSelectionStart}) {
-    if (selectionStart) {
-      onSelect({
-        eventType: EVENT_TYPE.END,
-        ...getSortedSelection({
-          start: selectionStart,
-          end: date,
-        }),
-      });
-      setSelectionStart(null);
-    } else {
-      onSelect({eventType:EVENT_TYPE.START, start: date, end: date});
-      setSelectionStart(date);
-    }
-}
-
-function getSortedSelection({start, end}) {
-  return isBefore(start, end)
-    ? {start, end}
-    : {start: end, end: start};
-}
 
 function handleSelect(date, {onSelect, selected, selectionStart, setSelectionStart}) {
   if (selectionStart) {
     onSelect({
       eventType: EVENT_TYPE.END,
-      ...getSortedSelection({
+      ...getMonthRangeDate({
         start: selectionStart,
         end: date,
       }),
     });
     setSelectionStart(null);
   } else {
-    onSelect({eventType:EVENT_TYPE.START, start: date, end: date});
+    onSelect({
+      eventType: EVENT_TYPE.START,
+      ...getMonthRangeDate({
+        start: date,
+        end: date,
+      }),
+    });
     setSelectionStart(date);
   }
 }
 
 function handleMouseOver(e, {onSelect, selectionStart}) {
-  const dateStr = e.target.getAttribute('data-date');
-  const date = dateStr && parse(dateStr);
-
-  if (!date) { return; }
-
+  e.stopPropagation();
+  const month = e.target.getAttribute('data-month');
+  if (!month) { return; }
   onSelect({
     eventType: EVENT_TYPE.HOVER,
-    ...getSortedSelection({
+    ...getMonthRangeDate({
       start: selectionStart,
-      end: date,
+      end: month,
     }),
   });
 }
 
-function getInitialDate({selected}) {
-  return selected && selected.start || new Date();
+function getMonthRangeDate({start, end, minSelected, maxSelected, minScrolled, maxScrolled}) {
+  const sortedDate = getSortedSelection({start, end});
+  const compareStartDate = [];
+  const compareEndDate = [];
+  if (sortedDate.start) {
+    compareStartDate.push(sortedDate.start, getFirstDateOfMonth(sortedDate.start));
+    minScrolled && compareStartDate.push(minScrolled);
+    minSelected && compareStartDate.push(minSelected);
+  }
+  if (sortedDate.end) {
+    compareEndDate.push(getLastDateOfMonth(sortedDate.end));
+    maxScrolled && compareEndDate.push(maxScrolled);
+    maxSelected && compareEndDate.push(maxSelected);
+  }
+  return {
+    start: compareStartDate.length > 0 ?
+            format(max(...compareStartDate), 'YYYY-MM-DD') :
+            sortedDate.start,
+    end: compareEndDate.length > 0 ?
+          format(min(...compareEndDate), 'YYYY-MM-DD') :
+          sortsortedDate.end,
+  };
 }
 
 if (typeof window !== 'undefined') {

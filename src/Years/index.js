@@ -7,6 +7,7 @@ import format from 'date-fns/format';
 import isAfter from 'date-fns/is_after';
 import isBefore from 'date-fns/is_before';
 import isSameMonth from 'date-fns/is_same_month';
+import parse from 'date-fns/parse';
 import isWithinRange from 'date-fns/is_within_range';
 import styles from './Years.scss';
 
@@ -49,14 +50,27 @@ export default class Years extends Component {
     }
   }
 
+  getSelected(selected) {
+    if (isRange(selected)) {
+      return {
+        start: parse(selected.start),
+        end: parse(selected.end),
+      }
+    }
+    return {
+      start: parse(selected),
+      end: parse(selected),
+    }
+  }
+
   renderMonths(year) {
     const {locale: {locale}, selected, theme, today, min, max, minDate, maxDate, handlers} = this.props;
-    const months = isRange(selected) ?  getMonthsForYear(year) : getMonthsForYear(year, selected.getDate());
+    const months = getMonthsForYear(year, this.getSelected(selected).start.getDate());
 
     return (
       <ol>
         {months.map((date, index) => {
-          const isSelected = isRange(selected) ? isWithinRange(date, selected.start, selected.end) : isSameMonth(date, selected);
+          const isSelected = isWithinRange(date, this.getSelected(selected).start, this.getSelected(selected).end);
           const isCurrentMonth = isSameMonth(date, today);
           const isDisabled = (
             isBefore(date, min) ||
@@ -73,7 +87,8 @@ export default class Years extends Component {
           }, isCurrentMonth && {
             borderColor: theme.todayColor,
           });
-
+          const isStart = isSameMonth(date, selected.start);
+          const isEnd = isSameMonth(date, selected.end);
           return (
             <li
               key={index}
@@ -88,13 +103,20 @@ export default class Years extends Component {
                 [styles.selected]: isSelected,
                 [styles.currentMonth]: isCurrentMonth,
                 [styles.disabled]: isDisabled,
+                [styles.range]: !(isStart && isEnd),
+                [styles.start]: isStart,
+                [styles.betweenRange]: isWithinRange(date, selected.start, selected.end) && !isStart && !isEnd,
+                [styles.end]: isEnd,
               })}
               style={style}
-              title={`Set date to ${format(date, 'MMMM Do, YYYY')}`}
-              data-date={date}
+              title={isRange(selected) ? '' : `Set date to ${format(date, 'MMMM Do, YYYY')}`}
+              data-month={`${format(date, 'YYYY-MM')}`}
               {...handlers}
             >
-              {format(date, 'MMM', {locale})}
+              <div
+                className={styles.selection}
+                data-month={`${format(date, 'YYYY-MM')}`}
+              >{format(date, 'MMM', {locale})}</div>
             </li>
           );
         })}
@@ -106,7 +128,7 @@ export default class Years extends Component {
     const {height, selected, showMonths, theme, today, width} = this.props;
     const currentYear = today.getFullYear();
     const years = this.props.years.slice(0, this.props.years.length);
-    const selectedYearIndex = isRange(selected) ? years.indexOf(selected.start.getFullYear()) : years.indexOf(selected.getFullYear());
+    const selectedYearIndex = years.indexOf(this.getSelected(selected).start.getFullYear());
     const rowHeight = showMonths ? 110 : 50;
     const heights = years.map((val, index) => index === 0 || index === years.length - 1
       ? rowHeight + SPACING
@@ -129,7 +151,7 @@ export default class Years extends Component {
           itemCount={years.length}
           estimatedItemSize={rowHeight}
           itemSize={(index) => heights[index]}
-          scrollToIndex={selectedYearIndex !== -1 && !isRange(selected) ? selectedYearIndex : null}
+          scrollToIndex={selectedYearIndex !== -1 ? selectedYearIndex : null}
           scrollToAlignment='center'
           renderItem={({index, style}) => {
             const year = years[index];
@@ -145,7 +167,7 @@ export default class Years extends Component {
                   [styles.first]: index === 0,
                   [styles.last]: index === years.length - 1,
                 })}
-                onClick={() => this.handleClick(new Date(selected).setYear(year))}
+                onClick={() => !isRange(selected) && this.handleClick(new Date(selected).setYear(year))}
                 title={`Set year to ${year}`}
                 data-year={year}
                 style={Object.assign({}, style, {

@@ -63,10 +63,10 @@ storiesOf('Higher Order Components', module)
       locale={{
         headerFormat: 'MMM Do',
       }}
-      Component={withRange(withKeyboardSupport(Calendar))}
+      Component={withRange(Calendar)}
     />
   ))
-  .add('Range Month selection', () => (
+  .add('Multiple month selection', () => (
     <InfiniteCalendar
       selected={{
         start: subMonths(new Date(), 1),
@@ -77,9 +77,8 @@ storiesOf('Higher Order Components', module)
           showHeader: false,
           hideYearsOnSelect: false,
       }}
-      locale={{
-        headerFormat: 'MMM Do',
-      }}
+      minDate={subMonths(new Date(), 10)} // Min selectable date
+      maxDate={addMonths(new Date(), 10)} // Max selectable date
       Component={withMonthRange(withKeyboardSupport(Calendar))}
     />
   ))
