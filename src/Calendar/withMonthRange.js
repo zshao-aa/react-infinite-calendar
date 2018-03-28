@@ -9,7 +9,6 @@ import {EVENT_TYPE, getInitialDate, getSortedSelection} from './Range';
 
 let isTouchDevice = false;
 
-// Enhancer to handle selecting and displaying multiple dates
 export const withMonthRange = compose(
   withDefaultProps,
   withState('scrollDate', 'setScrollDate', getInitialDate),
