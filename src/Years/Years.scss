@@ -94,7 +94,6 @@ $cellSize: 44px;
       list-style: none;
       border-radius: 50%;
       margin-bottom: 2px;
-      // border-radius: 50%;
       box-sizing: border-box;
 
       color: #444;
@@ -115,17 +114,6 @@ $cellSize: 44px;
           @include circle($cellSize);
           line-height: $cellSize;
           z-index: 2;
-
-          .month {
-            top: 9px;
-          }
-          .day {
-            position: relative;
-            top: 5px;
-
-            font-weight: bold;
-            font-size: 18px;
-          }
         }
       }
       &.disabled {

@@ -63,7 +63,7 @@ storiesOf('Higher Order Components', module)
       locale={{
         headerFormat: 'MMM Do',
       }}
-      Component={withRange(Calendar)}
+      Component={withRange(withKeyboardSupport(Calendar))}
     />
   ))
   .add('Multiple month selection', () => (
@@ -79,7 +79,7 @@ storiesOf('Higher Order Components', module)
       }}
       minDate={subMonths(new Date(), 10)} // Min selectable date
       maxDate={addMonths(new Date(), 10)} // Max selectable date
-      Component={withMonthRange(withKeyboardSupport(Calendar))}
+      Component={withMonthRange(Calendar)}
     />
   ))
   .add('Multiple date selection', () => {
