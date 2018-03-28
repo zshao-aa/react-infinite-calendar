@@ -1,4 +1,3 @@
-import format from 'date-fns/format';
 import min from 'date-fns/min';
 import max from 'date-fns/max';
 import {compose, withProps, withState} from 'recompose';
@@ -96,7 +95,7 @@ function getMonthRangeDate({start, end, minSelected, maxSelected, minScrolled, m
   }
   return {
     start: compareStartDate.length > 0 ? max(...compareStartDate) : sortedDate.start,
-    end: compareEndDate.length > 0 ? min(...compareEndDate) : sortsortedDate.end,
+    end: compareEndDate.length > 0 ? min(...compareEndDate) : sortedDate.end,
   };
 }
 

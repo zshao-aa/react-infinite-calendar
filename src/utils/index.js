@@ -6,8 +6,6 @@ import isBefore from 'date-fns/is_before';
 import isSameDay from 'date-fns/is_same_day';
 import endOfDay from 'date-fns/end_of_day';
 import startOfDay from 'date-fns/start_of_day';
-import min from 'date-fns/min';
-import max from 'date-fns/max';
 import parse from 'date-fns/parse';
 import {withPropsOnChange} from 'recompose';
 
