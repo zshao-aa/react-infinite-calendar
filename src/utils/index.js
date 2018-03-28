@@ -201,20 +201,4 @@ export function getSortedDate(start, end) {
     : {start: end, end: start};
 }
 
-export function getFirstDateOfMonth(dateStr) {
-    if (!dateStr) {
-        return dateStr;
-    }
-    const date = parse(dateStr);
-    return new Date(date.getFullYear(), date.getMonth(), 1);
-}
-
-export function getLastDateOfMonth(dateStr) {
-    if (!dateStr) {
-        return dateStr;
-    }
-    const date = parse(dateStr);
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0);
-}
-
 export {default as animate} from './animate';

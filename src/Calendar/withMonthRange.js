@@ -1,8 +1,10 @@
 import min from 'date-fns/min';
 import max from 'date-fns/max';
+import startOfMonth from 'date-fns/start_of_month';
+import endOfMonth from 'date-fns/end_of_month';
 import {compose, withProps, withState} from 'recompose';
 import {withDefaultProps} from './';
-import {withImmutableProps, getFirstDateOfMonth, getLastDateOfMonth} from '../utils';
+import {withImmutableProps} from '../utils';
 import {EVENT_TYPE, getInitialDate, getSortedSelection} from './Range';
 
 let isTouchDevice = false;
@@ -30,8 +32,8 @@ export const withMonthRange = compose(
       },
     },
     selected: {
-      start: selected && getFirstDateOfMonth(selected.start),
-      end: selected && getLastDateOfMonth(selected.end),
+      start: selected && startOfMonth(selected.start),
+      end: selected && endOfMonth(selected.end),
     },
   })),
 );
@@ -84,12 +86,12 @@ function getMonthRangeDate({start, end, minSelected, maxSelected, minScrolled, m
   const compareStartDate = [];
   const compareEndDate = [];
   if (sortedDate.start) {
-    compareStartDate.push(sortedDate.start, getFirstDateOfMonth(sortedDate.start));
+    compareStartDate.push(sortedDate.start, startOfMonth(sortedDate.start));
     minScrolled && compareStartDate.push(minScrolled);
     minSelected && compareStartDate.push(minSelected);
   }
   if (sortedDate.end) {
-    compareEndDate.push(getLastDateOfMonth(sortedDate.end));
+    compareEndDate.push(endOfMonth(sortedDate.end));
     maxScrolled && compareEndDate.push(maxScrolled);
     maxSelected && compareEndDate.push(maxSelected);
   }
