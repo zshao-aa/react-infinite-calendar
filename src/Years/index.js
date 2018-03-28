@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import VirtualList from 'react-tiny-virtual-list';
 import classNames from 'classnames';
-import {emptyFn, getMonthsForYear, isRange} from '../utils';
+import {emptyFn, getMonthsForYear, getFirstDateOfMonth, isRange} from '../utils';
 import format from 'date-fns/format';
 import isAfter from 'date-fns/is_after';
 import isBefore from 'date-fns/is_before';
@@ -52,10 +52,7 @@ export default class Years extends Component {
 
   getSelected(selected) {
     if (isRange(selected)) {
-      return {
-        start: parse(selected.start),
-        end: parse(selected.end),
-      }
+      return selected;
     }
     // remove time
     return {
@@ -74,8 +71,8 @@ export default class Years extends Component {
           const isSelected = isWithinRange(date, this.getSelected(selected).start, this.getSelected(selected).end);
           const isCurrentMonth = isSameMonth(date, today);
           const isDisabled = (
-            isBefore(date, min) ||
-            isBefore(date, minDate) ||
+            isBefore(date, getFirstDateOfMonth(min)) ||
+            isBefore(date, getFirstDateOfMonth(minDate)) ||
             isAfter(date, max) ||
             isAfter(date, maxDate)
           );

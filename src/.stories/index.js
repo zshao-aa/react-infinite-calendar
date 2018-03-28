@@ -66,7 +66,7 @@ storiesOf('Higher Order Components', module)
       Component={withRange(withKeyboardSupport(Calendar))}
     />
   ))
-  .add('Multiple month selection', () => (
+  .add('Month Range selection', () => (
     <InfiniteCalendar
       selected={{
         start: subMonths(new Date(), 1),
@@ -77,8 +77,8 @@ storiesOf('Higher Order Components', module)
           showHeader: false,
           hideYearsOnSelect: false,
       }}
-      minDate={subMonths(new Date(), 10)} // Min selectable date
-      maxDate={addMonths(new Date(), 10)} // Max selectable date
+      minDate={subMonths(new Date(), 10)}
+      maxDate={addMonths(new Date(), 10)}
       Component={withMonthRange(Calendar)}
     />
   ))

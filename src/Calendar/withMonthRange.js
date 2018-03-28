@@ -1,4 +1,3 @@
-import parse from 'date-fns/parse';
 import format from 'date-fns/format';
 import min from 'date-fns/min';
 import max from 'date-fns/max';
@@ -38,13 +37,17 @@ export const withMonthRange = compose(
   })),
 );
 
-function handleSelect(date, {onSelect, selected, selectionStart, setSelectionStart}) {
+function handleSelect(date, {onSelect, selected, selectionStart, setSelectionStart, min, max, minDate, maxDate}) {
   if (selectionStart) {
     onSelect({
       eventType: EVENT_TYPE.END,
       ...getMonthRangeDate({
         start: selectionStart,
         end: date,
+        minSelected: minDate,
+        maxSelected: maxDate,
+        minScrolled: min,
+        maxScrolled: max,
       }),
     });
     setSelectionStart(null);
@@ -54,6 +57,10 @@ function handleSelect(date, {onSelect, selected, selectionStart, setSelectionSta
       ...getMonthRangeDate({
         start: date,
         end: date,
+        minSelected: minDate,
+        maxSelected: maxDate,
+        minScrolled: min,
+        maxScrolled: max,
       }),
     });
     setSelectionStart(date);
@@ -88,12 +95,8 @@ function getMonthRangeDate({start, end, minSelected, maxSelected, minScrolled, m
     maxSelected && compareEndDate.push(maxSelected);
   }
   return {
-    start: compareStartDate.length > 0 ?
-            format(max(...compareStartDate), 'YYYY-MM-DD') :
-            sortedDate.start,
-    end: compareEndDate.length > 0 ?
-          format(min(...compareEndDate), 'YYYY-MM-DD') :
-          sortsortedDate.end,
+    start: compareStartDate.length > 0 ? max(...compareStartDate) : sortedDate.start,
+    end: compareEndDate.length > 0 ? min(...compareEndDate) : sortsortedDate.end,
   };
 }
 
