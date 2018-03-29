@@ -192,7 +192,7 @@ export function isRange(date) {
         return false;
     }
     const {start, end} = date;
-    return start && end;
+    return start !== undefined && end !== undefined;
 }
 
 export function getSortedDate(start, end) {
