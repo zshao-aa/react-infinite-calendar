@@ -8,6 +8,7 @@ import isAfter from 'date-fns/is_after';
 import isBefore from 'date-fns/is_before';
 import isSameMonth from 'date-fns/is_same_month';
 import startOfMonth from 'date-fns/start_of_month';
+import endOfMonth from 'date-fns/end_of_month';
 import parse from 'date-fns/parse';
 import isWithinRange from 'date-fns/is_within_range';
 import styles from './Years.scss';
@@ -53,7 +54,10 @@ export default class Years extends Component {
 
   getSelected(selected) {
     if (isRange(selected)) {
-      return selected;
+      return {
+          start: startOfMonth(selected.start),
+          end: endOfMonth(selected.end),
+      };
     }
     // remove time
     return {
@@ -65,7 +69,6 @@ export default class Years extends Component {
   renderMonths(year) {
     const {locale: {locale}, selected, theme, today, min, max, minDate, maxDate, handlers} = this.props;
     const months = getMonthsForYear(year, this.getSelected(selected).start.getDate());
-
     return (
       <ol>
         {months.map((date, index) => {

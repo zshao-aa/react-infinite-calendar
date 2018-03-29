@@ -32,8 +32,8 @@ export const withMonthRange = compose(
       },
     },
     selected: {
-      start: selected && startOfMonth(selected.start),
-      end: selected && endOfMonth(selected.end),
+      start: selected && selected.start,
+      end: selected && selected.end,
     },
   })),
 );
