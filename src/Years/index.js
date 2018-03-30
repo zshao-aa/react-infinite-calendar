@@ -126,11 +126,16 @@ export default class Years extends Component {
     );
   }
 
+  componentWillMount() {
+    const years = this.props.years.slice(0, this.props.years.length);
+     this.selectedYearIndex = years.indexOf(this.getSelected(this.props.selected).start.getFullYear());
+  }
+
   render() {
     const {height, selected, showMonths, theme, today, width} = this.props;
     const currentYear = today.getFullYear();
     const years = this.props.years.slice(0, this.props.years.length);
-    const selectedYearIndex = years.indexOf(this.getSelected(selected).start.getFullYear());
+    const  selectedYearIndex = this.selectedYearIndex;
     const rowHeight = showMonths ? 110 : 50;
     const heights = years.map((val, index) => index === 0 || index === years.length - 1
       ? rowHeight + SPACING
