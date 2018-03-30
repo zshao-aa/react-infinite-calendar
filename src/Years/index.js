@@ -135,7 +135,7 @@ export default class Years extends Component {
     const {height, selected, showMonths, theme, today, width} = this.props;
     const currentYear = today.getFullYear();
     const years = this.props.years.slice(0, this.props.years.length);
-    const  selectedYearIndex = this.selectedYearIndex;
+    const selectedYearIndex = this.selectedYearIndex;
     const rowHeight = showMonths ? 110 : 50;
     const heights = years.map((val, index) => index === 0 || index === years.length - 1
       ? rowHeight + SPACING
@@ -175,7 +175,7 @@ export default class Years extends Component {
                   [styles.last]: index === years.length - 1,
                 })}
                 onClick={() => !isRange(selected) && this.handleClick(new Date(selected).setYear(year))}
-                title={`Set year to ${year}`}
+                title={isRange(selected) ? '' : `Set year to ${year}`}
                 data-year={year}
                 style={Object.assign({}, style, {
                   color: (
