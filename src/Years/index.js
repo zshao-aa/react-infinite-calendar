@@ -37,6 +37,12 @@ export default class Years extends Component {
     showMonths: true,
   };
 
+  constructor(props) {
+      super(props);
+      const years = this.props.years.slice(0, this.props.years.length);
+      this.selectedYearIndex = years.indexOf(this.getSelected(this.props.selected).start.getFullYear());
+  }
+
   handleClick(date, e) {
     let {
       hideOnSelect,
@@ -124,11 +130,6 @@ export default class Years extends Component {
         })}
       </ol>
     );
-  }
-
-  componentWillMount() {
-    const years = this.props.years.slice(0, this.props.years.length);
-     this.selectedYearIndex = years.indexOf(this.getSelected(this.props.selected).start.getFullYear());
   }
 
   render() {
